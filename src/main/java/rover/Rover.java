@@ -44,9 +44,9 @@ public class Rover {
 
         return result;
     }
-    
+
     public void moveVehicle() {
-        switch(this.orientation) {
+        switch (this.orientation) {
             case NORTH:
                 this.yValue++;
                 break;
@@ -64,4 +64,41 @@ public class Rover {
         }
     }
 
+    public void turnVehicleLeft() {
+        switch (this.orientation) {
+            case NORTH:
+                this.orientation = Orientation.WEST;
+                break;
+            case EAST:
+                this.orientation = Orientation.NORTH;
+                break;
+            case SOUTH:
+                this.orientation = Orientation.EAST;
+                break;
+            case WEST:
+                this.orientation = Orientation.SOUTH;
+                break;
+            default:
+                throw new IllegalStateException("Invalid orientation occured!");
+        }
+    }
+
+    public void turnVehicleRight() {
+        switch (this.orientation) {
+            case NORTH:
+                this.orientation = Orientation.EAST;
+                break;
+            case EAST:
+                this.orientation = Orientation.SOUTH;
+                break;
+            case SOUTH:
+                this.orientation = Orientation.WEST;
+                break;
+            case WEST:
+                this.orientation = Orientation.NORTH;
+                break;
+            default:
+                throw new IllegalStateException("Invalid orientation occured!");
+        }
+    }
 }
