@@ -16,6 +16,28 @@ dependencies {
   testCompile 'junit:junit:4.12'
 }
 
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+    }
+
+    test {
+        java {
+            srcDirs = ['src/main/test']
+        }
+    }
+}
+
+
+test {
+    testLogging {
+	// Show that tests are run in the command-line output
+       events "PASSED", "FAILED", "SKIPPED"
+    }
+}
+
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
