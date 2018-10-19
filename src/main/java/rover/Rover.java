@@ -44,5 +44,24 @@ public class Rover {
 
         return result;
     }
+    
+    public void moveVehicle() {
+        switch(this.orientation) {
+            case NORTH:
+                this.yValue++;
+                break;
+            case EAST:
+                this.xValue++;
+                break;
+            case SOUTH:
+                this.yValue--;
+                break;
+            case WEST:
+                this.xValue--;
+                break;
+            default:
+                throw new IllegalStateException("Invalid orientation occured!");
+        }
+    }
 
 }

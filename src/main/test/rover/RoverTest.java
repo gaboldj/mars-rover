@@ -16,7 +16,6 @@ public class RoverTest extends TestHelper {
 
     private Rover underTest = new Rover();
 
-
     @Test
     public void test_setDeployPosition_with_correct_values() {
         // Given:
@@ -114,4 +113,73 @@ public class RoverTest extends TestHelper {
         assertThat(resultList.get(1)).isEqualTo(String.valueOf(yValue));
         assertThat(resultList.get(2)).isEqualTo(orientation.getAbbreviation());
     }
+
+    @Test
+    public void test_move_heading_north() {
+        // Given:
+        int xValue = anyInt();
+        int yValue = anyInt();
+        Orientation orientation = Orientation.NORTH;
+        underTest.setDeployPosition(xValue, yValue, orientation);
+
+        // When:
+        underTest.moveVehicle();
+
+        // Then:
+        assertThat(underTest.getxValue()).isEqualTo(xValue);
+        assertThat(underTest.getyValue()).isEqualTo(yValue + 1);
+        assertThat(underTest.getOrientation()).isEqualTo(orientation);
+    }
+
+    @Test
+    public void test_move_heading_east() {
+        // Given:
+        int xValue = anyInt();
+        int yValue = anyInt();
+        Orientation orientation = Orientation.EAST;
+        underTest.setDeployPosition(xValue, yValue, orientation);
+
+        // When:
+        underTest.moveVehicle();
+
+        // Then:
+        assertThat(underTest.getxValue()).isEqualTo(xValue + 1);
+        assertThat(underTest.getyValue()).isEqualTo(yValue);
+        assertThat(underTest.getOrientation()).isEqualTo(orientation);
+    }
+
+    @Test
+    public void test_move_heading_south() {
+        // Given:
+        int xValue = anyInt();
+        int yValue = anyInt();
+        Orientation orientation = Orientation.SOUTH;
+        underTest.setDeployPosition(xValue, yValue, orientation);
+
+        // When:
+        underTest.moveVehicle();
+
+        // Then:
+        assertThat(underTest.getxValue()).isEqualTo(xValue);
+        assertThat(underTest.getyValue()).isEqualTo(yValue - 1);
+        assertThat(underTest.getOrientation()).isEqualTo(orientation);
+    }
+
+    @Test
+    public void test_move_heading_west() {
+        // Given:
+        int xValue = anyInt();
+        int yValue = anyInt();
+        Orientation orientation = Orientation.WEST;
+        underTest.setDeployPosition(xValue, yValue, orientation);
+
+        // When:
+        underTest.moveVehicle();
+
+        // Then:
+        assertThat(underTest.getxValue()).isEqualTo(xValue - 1);
+        assertThat(underTest.getyValue()).isEqualTo(yValue);
+        assertThat(underTest.getOrientation()).isEqualTo(orientation);
+    }
+
 }
