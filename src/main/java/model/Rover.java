@@ -10,7 +10,8 @@ import com.google.common.base.Joiner;
 
 import constants.Instruction;
 import constants.Orientation;
-import constants.PlateauCoordinates;
+import constants.PlateauSize;
+import model.exception.PlateauExceededException;
 
 public class Rover {
     private int xValue;
@@ -98,28 +99,28 @@ public class Rover {
         throws PlateauExceededException {
         switch (orientation) {
             case N:
-                if (this.yValue == PlateauCoordinates.maxYValue) {
+                if (this.yValue >= PlateauSize.maxYValue) {
                     throw new PlateauExceededException(
                             String.format("Y-value %s exceeds the plateau.", this.yValue + 1));
                 }
                 this.yValue++;
                 break;
             case E:
-                if (this.xValue == PlateauCoordinates.maxXValue) {
+                if (this.xValue >= PlateauSize.maxXValue) {
                     throw new PlateauExceededException(
                             String.format("X-value %s exceeds the plateau.", this.xValue + 1));
                 }
                 this.xValue++;
                 break;
             case S:
-                if (this.yValue == PlateauCoordinates.minYValue) {
+                if (this.yValue <= PlateauSize.minYValue) {
                     throw new PlateauExceededException(
                             String.format("Y-value %s exceeds the plateau.", this.yValue - 1));
                 }
                 this.yValue--;
                 break;
             case W:
-                if (this.xValue == PlateauCoordinates.minXValue) {
+                if (this.xValue <= PlateauSize.minXValue) {
                     throw new PlateauExceededException(
                             String.format("X-value %s exceeds the plateau.", this.xValue - 1));
                 }

@@ -1,13 +1,13 @@
 package constants;
 
-public class PlateauCoordinates {
+public class PlateauSize {
 
     public static final int minXValue = 0;
     public static final int minYValue = 0;
     public static int maxXValue;
     public static int maxYValue;
 
-    public PlateauCoordinates() {
+    public PlateauSize() {
     }
 
     public static void setMaxXValue(int input) {

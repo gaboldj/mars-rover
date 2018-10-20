@@ -10,7 +10,8 @@ import org.junit.Test;
 import com.google.common.base.Splitter;
 
 import constants.Orientation;
-import constants.PlateauCoordinates;
+import constants.PlateauSize;
+import model.exception.PlateauExceededException;
 import testenv.TestHelper;
 
 public class RoverTest extends TestHelper {
@@ -200,7 +201,7 @@ public class RoverTest extends TestHelper {
         throws PlateauExceededException {
         // Given:
         int xValue = anyXCoordinate();
-        int yValue = PlateauCoordinates.maxYValue;
+        int yValue = PlateauSize.maxYValue;
         Orientation orientation = Orientation.N;
         underTest.setDeployPosition(xValue, yValue, orientation);
 
@@ -209,7 +210,7 @@ public class RoverTest extends TestHelper {
             underTest.moveVehicle();
         } catch (PlateauExceededException ex) {
             // Then:
-            assertThat(ex.getMessage()).contains("Y-value " + (PlateauCoordinates.maxYValue + 1));
+            assertThat(ex.getMessage()).contains("Y-value " + (PlateauSize.maxYValue + 1));
             return;
         }
 
@@ -221,7 +222,7 @@ public class RoverTest extends TestHelper {
         throws PlateauExceededException {
         // Given:
         int xValue = anyXCoordinate();
-        int yValue = PlateauCoordinates.minYValue;
+        int yValue = PlateauSize.minYValue;
         Orientation orientation = Orientation.S;
         underTest.setDeployPosition(xValue, yValue, orientation);
 
@@ -230,7 +231,7 @@ public class RoverTest extends TestHelper {
             underTest.moveVehicle();
         } catch (PlateauExceededException ex) {
             // Then:
-            assertThat(ex.getMessage()).contains("Y-value " + (PlateauCoordinates.minYValue - 1));
+            assertThat(ex.getMessage()).contains("Y-value " + (PlateauSize.minYValue - 1));
             return;
         }
 
@@ -241,7 +242,7 @@ public class RoverTest extends TestHelper {
     public void test_moveVehicle_exceeds_X_max_value()
         throws PlateauExceededException {
         // Given:
-        int xValue = PlateauCoordinates.maxXValue;
+        int xValue = PlateauSize.maxXValue;
         int yValue = anyYCoordinate();
         Orientation orientation = Orientation.E;
         underTest.setDeployPosition(xValue, yValue, orientation);
@@ -251,7 +252,7 @@ public class RoverTest extends TestHelper {
             underTest.moveVehicle();
         } catch (PlateauExceededException ex) {
             // Then:
-            assertThat(ex.getMessage()).contains("X-value " + (PlateauCoordinates.maxXValue + 1));
+            assertThat(ex.getMessage()).contains("X-value " + (PlateauSize.maxXValue + 1));
             return;
         }
 
@@ -262,7 +263,7 @@ public class RoverTest extends TestHelper {
     public void test_moveVehicle_exceeds_X_min_value()
         throws PlateauExceededException {
         // Given:
-        int xValue = PlateauCoordinates.minXValue;
+        int xValue = PlateauSize.minXValue;
         int yValue = anyYCoordinate();
         Orientation orientation = Orientation.W;
         underTest.setDeployPosition(xValue, yValue, orientation);
@@ -272,7 +273,7 @@ public class RoverTest extends TestHelper {
             underTest.moveVehicle();
         } catch (PlateauExceededException ex) {
             // Then:
-            assertThat(ex.getMessage()).contains("X-value " + (PlateauCoordinates.minXValue - 1));
+            assertThat(ex.getMessage()).contains("X-value " + (PlateauSize.minXValue - 1));
             return;
         }
 

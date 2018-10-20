@@ -7,14 +7,14 @@ import java.util.Random;
 import org.junit.Before;
 
 import constants.Orientation;
-import constants.PlateauCoordinates;
+import constants.PlateauSize;
 
 public class TestHelper {
     
     @Before
     public void setupPlateau() {
-       PlateauCoordinates.setMaxXValue(anyInt());
-       PlateauCoordinates.setMaxYValue(anyInt());
+       PlateauSize.setMaxXValue(anyInt());
+       PlateauSize.setMaxYValue(anyInt());
     }
 
     private static int anyInt() {
@@ -22,11 +22,11 @@ public class TestHelper {
     }
     
     protected static int anyXCoordinate() {
-        return new Random().nextInt(PlateauCoordinates.maxXValue);
+        return new Random().nextInt(PlateauSize.maxXValue);
     }
     
     protected static int anyYCoordinate() {
-        return new Random().nextInt(PlateauCoordinates.maxYValue);
+        return new Random().nextInt(PlateauSize.maxYValue);
     }
     
     protected static Orientation anyOrientation() {

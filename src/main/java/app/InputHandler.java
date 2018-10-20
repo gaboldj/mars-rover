@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 
 import constants.Instruction;
 import constants.Orientation;
-import constants.PlateauCoordinates;
+import constants.PlateauSize;
 import model.Rover;
 
 public class InputHandler {
@@ -44,23 +44,32 @@ public class InputHandler {
     }
 
     /**
-     * Splits the given user input into single instructions and converts each to
-     * the designated type ({@link Instruction}).
+     * Performs the user's input of the console.
      * 
-     * @param instructionInput Given user input
-     * @return List of {@link Instruction}s
+     * @return The user's input in upper case lettes and without leading and
+     *         trailing whitespace characters.
      */
-    private List<Instruction> extractInstructions(String instructionInput) {
-        List<Instruction> instructionList = Lists.newArrayList();
-        String[] splittedInput = instructionInput.toUpperCase().split(""); // splits into single characters as String
-        try {
-            for (String instruction : splittedInput) {
-                instructionList.add(Instruction.valueOf(instruction));
-            }
-        } catch (Exception ex) {
-            throw new IllegalArgumentException("Invalid instructions given: " + instructionInput);
-        }
-        return instructionList;
+    private String readUserInput() {
+        return this.scanner.nextLine().toUpperCase().trim();
+    }
+
+    /**
+     * Constitutes the plateau where the rover(s) will operate. An exception will be
+     * thrown if the given plateau size is invalid.
+     * 
+     * @param userInput
+     */
+    private void configurePlateau(String userInput) {
+        List<String> plateauInput = Splitter.on(' ').splitToList(userInput);
+        // @formatter:off
+        checkArgument(
+                plateauInput.size() == 2 && 
+                Integer.valueOf(plateauInput.get(0)) >= PlateauSize.minXValue &&
+                Integer.valueOf(plateauInput.get(1)) >= PlateauSize.minYValue, 
+                "Invalid plateau size!");
+        // @formatter:on
+        PlateauSize.setMaxXValue(Integer.valueOf(plateauInput.get(0)));
+        PlateauSize.setMaxYValue(Integer.valueOf(plateauInput.get(1)));
     }
 
     /**
@@ -75,8 +84,8 @@ public class InputHandler {
         // @formatter:off
         checkArgument(
                 inputValues.size() == 3 && 
-                Integer.valueOf(inputValues.get(0)) >= PlateauCoordinates.minXValue &&
-                Integer.valueOf(inputValues.get(1)) >= PlateauCoordinates.minYValue, 
+                Integer.valueOf(inputValues.get(0)) >= PlateauSize.minXValue &&
+                Integer.valueOf(inputValues.get(1)) >= PlateauSize.minYValue, 
                 "Invalid coordinates given!");
         // @formatter:on
         Orientation orientation = Orientation.valueOf(inputValues.get(2));
@@ -97,31 +106,22 @@ public class InputHandler {
     }
 
     /**
-     * Constitutes the plateau where the rover(s) operate. An Exception will be
-     * thrown if the given plateau size is invalid.
+     * Splits the given user input into single instructions and converts each to
+     * the designated type ({@link Instruction}).
      * 
-     * @param userInput
+     * @param instructionInput Given user input
+     * @return List of {@link Instruction}s
      */
-    private void configurePlateau(String userInput) {
-        List<String> plateauInput = Splitter.on(' ').splitToList(userInput);
-        // @formatter:off
-        checkArgument(
-                plateauInput.size() == 2 && 
-                Integer.valueOf(plateauInput.get(0)) >= PlateauCoordinates.minXValue &&
-                Integer.valueOf(plateauInput.get(1)) >= PlateauCoordinates.minYValue, 
-                "Invalid plateau size!");
-        // @formatter:on
-        PlateauCoordinates.setMaxXValue(Integer.valueOf(plateauInput.get(0)));
-        PlateauCoordinates.setMaxYValue(Integer.valueOf(plateauInput.get(1)));
-    }
-
-    /**
-     * Performs the user's input of the console.
-     * 
-     * @return The user's input in upper case lettes and without leading and
-     *         trailing whitespace characters.
-     */
-    private String readUserInput() {
-        return this.scanner.nextLine().toUpperCase().trim();
+    private List<Instruction> extractInstructions(String instructionInput) {
+        String[] splittedInput = instructionInput.toUpperCase().split(""); // splits into single characters as String
+        List<Instruction> instructionList = Lists.newArrayList();
+        try {
+            for (String instruction : splittedInput) {
+                instructionList.add(Instruction.valueOf(instruction));
+            }
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Invalid instructions given: " + instructionInput);
+        }
+        return instructionList;
     }
 }
