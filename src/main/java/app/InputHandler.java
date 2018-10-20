@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.util.List;
 import java.util.Scanner;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
@@ -15,6 +16,9 @@ import model.Rover;
 
 public class InputHandler {
     Scanner scanner;
+    
+    public InputHandler() {
+    }
 
     public void process() {
         scanner = new Scanner(System.in);
@@ -59,8 +63,9 @@ public class InputHandler {
      * 
      * @param userInput
      */
-    private void configurePlateau(String userInput) {
-        List<String> plateauInput = Splitter.on(' ').splitToList(userInput);
+    @VisibleForTesting
+    void configurePlateau(String userInput) {
+        List<String> plateauInput = Splitter.on(' ').omitEmptyStrings().splitToList(userInput);
         // @formatter:off
         checkArgument(
                 plateauInput.size() == 2 && 
@@ -80,7 +85,7 @@ public class InputHandler {
      * @return The deployed Rover
      */
     private Rover checkInputValuesAndDeployRover(String userInput) {
-        List<String> inputValues = Splitter.on(' ').splitToList(userInput);
+        List<String> inputValues = Splitter.on(' ').omitEmptyStrings().splitToList(userInput);
         // @formatter:off
         checkArgument(
                 inputValues.size() == 3 && 
