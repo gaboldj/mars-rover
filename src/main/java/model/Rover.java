@@ -1,11 +1,16 @@
-package rover;
+package model;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.List;
+
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 
+import constants.Instruction;
 import constants.Orientation;
+import constants.PlateauCoordinates;
 
 public class Rover {
     private int xValue;
@@ -13,16 +18,6 @@ public class Rover {
     private Orientation orientation;
 
     public Rover() {
-    }
-
-    public void setDeployPosition(int initialXValue, int initialYValue, Orientation initialOrientation) {
-        checkArgument(initialXValue >= 0, "The X-value must not be negative!");
-        checkArgument(initialYValue >= 0, "The Y-value must not be negative!");
-        checkNotNull(initialOrientation, "The vehicle's Orientation must not be null!");
-
-        this.xValue = initialXValue;
-        this.yValue = initialYValue;
-        this.orientation = initialOrientation;
     }
 
     public int getxValue() {
@@ -37,26 +32,97 @@ public class Rover {
         return orientation;
     }
 
-    public String getPositionAsOutput() {
-        Joiner joiner = Joiner.on(" ");
-        String result = joiner.join(xValue, yValue, orientation.getAbbreviation());
-        System.out.println(result);
+    public void setDeployPosition(int initialXValue, int initialYValue, Orientation initialOrientation) {
+        checkArgument(initialXValue >= 0, "The X-value must not be negative!");
+        checkArgument(initialYValue >= 0, "The Y-value must not be negative!");
+        checkNotNull(initialOrientation, "The vehicle's orientation must not be null!");
 
-        return result;
+        this.xValue = initialXValue;
+        this.yValue = initialYValue;
+        this.orientation = initialOrientation;
     }
 
-    public void moveVehicle() {
-        switch (this.orientation) {
-            case NORTH:
+    /**
+     * Lets the rover execute each instruction of the given list. Finally the
+     * rover prints its actual position and orientation.
+     * 
+     * @param roverInstructions The user's list of instructions
+     */
+    public void executeInstructions(List<Instruction> roverInstructions) {
+        for (Instruction instruction : roverInstructions) {
+            try {
+                this.executeInstruction(instruction);
+            } catch (Exception ex) {
+                System.err.println("Error occured while executing instruction " + instruction
+                        + "\nCurrent Position: " + getPositionAsOutput() + "\n" + ex);
+            }
+        }
+        System.out.println(getPositionAsOutput());
+    }
+
+    /**
+     * Lets the rover execute a single instruction.
+     * 
+     * @param instruction Single instruction that rover should execute
+     * @throws PlateauExceededException Exception will thrown if the given
+     *             instruction can't be executed. E.g. if the new coordinates
+     *             would exceed the plateau.
+     */
+    private void executeInstruction(Instruction instruction)
+        throws PlateauExceededException {
+        switch (instruction) {
+            case M:
+                moveVehicle();
+                break;
+            case L:
+                turnVehicleLeft();
+                break;
+            case R:
+                turnVehicleRight();
+                break;
+            default:
+                throw new IllegalStateException("Invalid instruction occured!");
+        }
+    }
+
+    /**
+     * Moves the rover forward. The direction depends on the actual orientation
+     * of the rover.
+     * 
+     * @throws PlateauExceededException Exception will thrown if the move can't
+     *             be executed. E.g. if the new coordinates would exceed the
+     *             plateau.
+     */
+    @VisibleForTesting
+    void moveVehicle()
+        throws PlateauExceededException {
+        switch (orientation) {
+            case N:
+                if (this.yValue == PlateauCoordinates.maxYValue) {
+                    throw new PlateauExceededException(
+                            String.format("Y-value %s exceeds the plateau.", this.yValue + 1));
+                }
                 this.yValue++;
                 break;
-            case EAST:
+            case E:
+                if (this.xValue == PlateauCoordinates.maxXValue) {
+                    throw new PlateauExceededException(
+                            String.format("X-value %s exceeds the plateau.", this.xValue + 1));
+                }
                 this.xValue++;
                 break;
-            case SOUTH:
+            case S:
+                if (this.yValue == PlateauCoordinates.minYValue) {
+                    throw new PlateauExceededException(
+                            String.format("Y-value %s exceeds the plateau.", this.yValue - 1));
+                }
                 this.yValue--;
                 break;
-            case WEST:
+            case W:
+                if (this.xValue == PlateauCoordinates.minXValue) {
+                    throw new PlateauExceededException(
+                            String.format("X-value %s exceeds the plateau.", this.xValue - 1));
+                }
                 this.xValue--;
                 break;
             default:
@@ -64,41 +130,62 @@ public class Rover {
         }
     }
 
-    public void turnVehicleLeft() {
+    /**
+     * Turns the rover to the left. This changes orientation of the rover but
+     * not its position (coordinates). of the rover.
+     */
+    @VisibleForTesting
+    void turnVehicleLeft() {
         switch (this.orientation) {
-            case NORTH:
-                this.orientation = Orientation.WEST;
+            case N:
+                this.orientation = Orientation.W;
                 break;
-            case EAST:
-                this.orientation = Orientation.NORTH;
+            case E:
+                this.orientation = Orientation.N;
                 break;
-            case SOUTH:
-                this.orientation = Orientation.EAST;
+            case S:
+                this.orientation = Orientation.E;
                 break;
-            case WEST:
-                this.orientation = Orientation.SOUTH;
+            case W:
+                this.orientation = Orientation.S;
                 break;
             default:
                 throw new IllegalStateException("Invalid orientation occured!");
         }
     }
 
-    public void turnVehicleRight() {
+    /**
+     * Turns the rover to the right. This changes orientation of the rover but
+     * not its position (coordinates). of the rover.
+     */
+    @VisibleForTesting
+    void turnVehicleRight() {
         switch (this.orientation) {
-            case NORTH:
-                this.orientation = Orientation.EAST;
+            case N:
+                this.orientation = Orientation.E;
                 break;
-            case EAST:
-                this.orientation = Orientation.SOUTH;
+            case E:
+                this.orientation = Orientation.S;
                 break;
-            case SOUTH:
-                this.orientation = Orientation.WEST;
+            case S:
+                this.orientation = Orientation.W;
                 break;
-            case WEST:
-                this.orientation = Orientation.NORTH;
+            case W:
+                this.orientation = Orientation.N;
                 break;
             default:
                 throw new IllegalStateException("Invalid orientation occured!");
         }
+    }
+
+    /**
+     * Returns the actual position and orientation of the rover.
+     * 
+     * @return The rover's actual position and orientation
+     */
+    @VisibleForTesting
+    String getPositionAsOutput() {
+        Joiner joiner = Joiner.on(" ");
+        return joiner.join(xValue, yValue, orientation);
     }
 }

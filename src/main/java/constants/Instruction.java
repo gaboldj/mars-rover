@@ -1,19 +1,12 @@
 package constants;
 
-public enum Command {
+public enum Instruction {
     
-    MOVE("M"),
-    TURN_LEFT("L"),
-    TURN_RIGHT("R");
+    M, // MOVE FORWARD
+    L, // TURN LEFT
+    R; // TURN RIGHT
 
-    private String command;
-    
-    Command(String command) {
-        this.command = command;
-    }
- 
-    public String getCommand() {
-        return command;
+    private Instruction() {
     }
 
 }
