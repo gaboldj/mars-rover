@@ -9,9 +9,11 @@ import org.junit.Test;
 
 import com.google.common.base.Splitter;
 
+import app.RoverRegistry;
 import constants.Orientation;
 import constants.PlateauSize;
 import model.exception.PlateauExceededException;
+import model.exception.PositionBlockedException;
 import testenv.TestHelper;
 
 public class RoverTest extends TestHelper {
@@ -47,11 +49,10 @@ public class RoverTest extends TestHelper {
         // When:
         try {
             underTest.setDeployPosition(xValue, yValue, orientation);
-        } catch (Throwable t) {
+        } catch (IllegalArgumentException ex) {
 
             // Then:
-            assertThat(t).isInstanceOf(IllegalArgumentException.class);
-            assertThat(t.getMessage()).contains("X-value must not be negative");
+            assertThat(ex.getMessage()).contains("X-value must not be negative");
             return;
         }
 
@@ -68,11 +69,10 @@ public class RoverTest extends TestHelper {
         // When:
         try {
             underTest.setDeployPosition(xValue, yValue, orientation);
-        } catch (Throwable t) {
+        } catch (IllegalArgumentException ex) {
 
             // Then:
-            assertThat(t).isInstanceOf(IllegalArgumentException.class);
-            assertThat(t.getMessage()).contains("Y-value must not be negative");
+            assertThat(ex.getMessage()).contains("Y-value must not be negative");
             return;
         }
 
@@ -126,7 +126,7 @@ public class RoverTest extends TestHelper {
     //
     @Test
     public void test_moveVehicle_heading_north()
-        throws PlateauExceededException {
+        throws PlateauExceededException, PositionBlockedException {
         // Given:
         int xValue = anyXCoordinate();
         int yValue = anyYCoordinate();
@@ -144,7 +144,7 @@ public class RoverTest extends TestHelper {
 
     @Test
     public void test_moveVehicle_heading_east()
-        throws PlateauExceededException {
+        throws PlateauExceededException, PositionBlockedException {
         // Given:
         int xValue = anyXCoordinate();
         int yValue = anyYCoordinate();
@@ -162,7 +162,7 @@ public class RoverTest extends TestHelper {
 
     @Test
     public void test_moveVehicle_heading_south()
-        throws PlateauExceededException {
+        throws PlateauExceededException, PositionBlockedException {
         // Given:
         int xValue = anyXCoordinate();
         int yValue = anyYCoordinate();
@@ -180,7 +180,7 @@ public class RoverTest extends TestHelper {
 
     @Test
     public void test_moveVehicle_heading_west()
-        throws PlateauExceededException {
+        throws PlateauExceededException, PositionBlockedException {
         // Given:
         int xValue = anyXCoordinate();
         int yValue = anyYCoordinate();
@@ -198,7 +198,7 @@ public class RoverTest extends TestHelper {
 
     @Test
     public void test_moveVehicle_exceeds_Y_max_value()
-        throws PlateauExceededException {
+        throws PositionBlockedException {
         // Given:
         int xValue = anyXCoordinate();
         int yValue = PlateauSize.maxYValue;
@@ -219,7 +219,7 @@ public class RoverTest extends TestHelper {
 
     @Test
     public void test_moveVehicle_exceeds_Y_min_value()
-        throws PlateauExceededException {
+        throws PositionBlockedException {
         // Given:
         int xValue = anyXCoordinate();
         int yValue = PlateauSize.minYValue;
@@ -240,7 +240,7 @@ public class RoverTest extends TestHelper {
 
     @Test
     public void test_moveVehicle_exceeds_X_max_value()
-        throws PlateauExceededException {
+        throws PositionBlockedException {
         // Given:
         int xValue = PlateauSize.maxXValue;
         int yValue = anyYCoordinate();
@@ -261,7 +261,7 @@ public class RoverTest extends TestHelper {
 
     @Test
     public void test_moveVehicle_exceeds_X_min_value()
-        throws PlateauExceededException {
+        throws PositionBlockedException {
         // Given:
         int xValue = PlateauSize.minXValue;
         int yValue = anyYCoordinate();
@@ -274,6 +274,77 @@ public class RoverTest extends TestHelper {
         } catch (PlateauExceededException ex) {
             // Then:
             assertThat(ex.getMessage()).contains("X-value " + (PlateauSize.minXValue - 1));
+            return;
+        }
+
+        fail("Exception expected!");
+    }
+
+    //
+    // CHECK IF POSITON IS BLOCKED
+    //
+    @Test
+    public void test_checkIfPositionIsBlocked_no_other_rover()
+        throws PositionBlockedException {
+        // Given:
+        int xValue = anyXCoordinate();
+        int yValue = anyYCoordinate();
+
+        // When:
+        underTest.checkIfPositionIsBlocked(xValue, yValue);
+
+        // Then: no exception
+    }
+
+    @Test
+    public void test_checkIfPositionIsBlocked_with_another_distant_rover_same_X_value()
+        throws PositionBlockedException {
+        // Given:
+        int blockedXValue = anyXCoordinate();
+        int blockedYValue = anyYCoordinate();
+        Rover anotherRover = new Rover();
+        anotherRover.setDeployPosition(blockedXValue, blockedYValue, anyOrientation());
+        RoverRegistry.registerRover(1, anotherRover);
+
+        // When:
+        underTest.checkIfPositionIsBlocked(blockedXValue, blockedYValue + 1);
+
+        // Then: no exception
+    }
+
+    @Test
+    public void test_checkIfPositionIsBlocked_with_another_distant_rover_same_Y_value()
+        throws PositionBlockedException {
+        // Given:
+        int blockedXValue = anyXCoordinate();
+        int blockedYValue = anyYCoordinate();
+        Rover anotherRover = new Rover();
+        anotherRover.setDeployPosition(blockedXValue, blockedYValue, anyOrientation());
+        RoverRegistry.registerRover(1, anotherRover);
+
+        // When:
+        underTest.checkIfPositionIsBlocked(blockedXValue + 1, blockedYValue);
+
+        // Then: no exception
+    }
+
+    @Test
+    public void test_checkIfPositionIsBlocked_with_another_nondistant_rover()
+        throws PositionBlockedException {
+        // Given:
+        int blockedXValue = anyXCoordinate();
+        int blockedYValue = anyYCoordinate();
+        Rover anotherRover = new Rover();
+        anotherRover.setDeployPosition(blockedXValue, blockedYValue, anyOrientation());
+        RoverRegistry.registerRover(1, anotherRover);
+
+        // When:
+        try {
+            underTest.checkIfPositionIsBlocked(blockedXValue, blockedYValue);
+        } catch (PositionBlockedException ex) {
+
+            // Then:
+            assertThat(ex.getMessage()).contains("blocked by another rover");
             return;
         }
 

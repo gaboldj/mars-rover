@@ -3,15 +3,18 @@ package model;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 
+import app.RoverRegistry;
 import constants.Instruction;
 import constants.Orientation;
 import constants.PlateauSize;
 import model.exception.PlateauExceededException;
+import model.exception.PositionBlockedException;
 
 public class Rover {
     private int xValue;
@@ -68,9 +71,10 @@ public class Rover {
      * @throws PlateauExceededException Exception will thrown if the given
      *             instruction can't be executed. E.g. if the new coordinates
      *             would exceed the plateau.
+     * @throws PositionBlockedException
      */
     private void executeInstruction(Instruction instruction)
-        throws PlateauExceededException {
+        throws PlateauExceededException, PositionBlockedException {
         switch (instruction) {
             case M:
                 moveVehicle();
@@ -91,18 +95,22 @@ public class Rover {
      * of the rover.
      * 
      * @throws PlateauExceededException Exception will thrown if the move can't
-     *             be executed. E.g. if the new coordinates would exceed the
+     *             be executed because the new coordinates would exceed the
      *             plateau.
+     * @throws PositionBlockedException Exception will thrown if the move can't
+     *             be executed because another rover is blocking the proposed
+     *             position.
      */
     @VisibleForTesting
     void moveVehicle()
-        throws PlateauExceededException {
+        throws PlateauExceededException, PositionBlockedException {
         switch (orientation) {
             case N:
                 if (this.yValue >= PlateauSize.maxYValue) {
                     throw new PlateauExceededException(
                             String.format("Y-value %s exceeds the plateau.", this.yValue + 1));
                 }
+                checkIfPositionIsBlocked(this.xValue, this.yValue + 1);
                 this.yValue++;
                 break;
             case E:
@@ -110,6 +118,7 @@ public class Rover {
                     throw new PlateauExceededException(
                             String.format("X-value %s exceeds the plateau.", this.xValue + 1));
                 }
+                checkIfPositionIsBlocked(this.xValue + 1, this.yValue);
                 this.xValue++;
                 break;
             case S:
@@ -117,6 +126,7 @@ public class Rover {
                     throw new PlateauExceededException(
                             String.format("Y-value %s exceeds the plateau.", this.yValue - 1));
                 }
+                checkIfPositionIsBlocked(this.xValue, this.yValue - 1);
                 this.yValue--;
                 break;
             case W:
@@ -124,10 +134,31 @@ public class Rover {
                     throw new PlateauExceededException(
                             String.format("X-value %s exceeds the plateau.", this.xValue - 1));
                 }
+                checkIfPositionIsBlocked(this.xValue - 1, this.yValue);
                 this.xValue--;
                 break;
             default:
                 throw new IllegalStateException("Invalid orientation occured!");
+        }
+    }
+
+    /**
+     * Checks if the proposed positon is already blocked by any registered
+     * rover. If so, a {@link PositionBlockedException} will be thrown.
+     * 
+     * @param newXValue The new X-coordinate the rover wants to step on.
+     * @param newYValue The new Y-coordinate the rover wants to step on.
+     * @throws PositionBlockedException
+     */
+    @VisibleForTesting
+    void checkIfPositionIsBlocked(int newXValue, int newYValue)
+        throws PositionBlockedException {
+        Collection<Rover> roverCol = RoverRegistry.getDeployedRovers();
+        for (Rover rover : roverCol) {
+            if (rover.xValue == newXValue && rover.yValue == newYValue) {
+                throw new PositionBlockedException(String
+                        .format("The positon (%s %s) is blocked by another rover.", newXValue, newYValue));
+            }
         }
     }
 
