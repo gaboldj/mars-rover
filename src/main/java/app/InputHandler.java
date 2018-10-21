@@ -54,7 +54,7 @@ public class InputHandler {
      *         trailing whitespace characters.
      */
     private String readUserInput() {
-        return this.scanner.nextLine().toUpperCase().trim();
+        return this.scanner.nextLine().trim();
     }
 
     /**
@@ -84,7 +84,8 @@ public class InputHandler {
      * @param userInput Given user input
      * @return The deployed Rover
      */
-    private Rover checkInputValuesAndDeployRover(String userInput) {
+    @VisibleForTesting
+    Rover checkInputValuesAndDeployRover(String userInput) {
         List<String> inputValues = Splitter.on(' ').omitEmptyStrings().splitToList(userInput);
         // @formatter:off
         checkArgument(
@@ -93,7 +94,7 @@ public class InputHandler {
                 Integer.valueOf(inputValues.get(1)) >= PlateauSize.minYValue, 
                 "Invalid coordinates given!");
         // @formatter:on
-        Orientation orientation = Orientation.valueOf(inputValues.get(2));
+        Orientation orientation = Orientation.valueOf(inputValues.get(2).toUpperCase());
         return deployRover(inputValues.get(0), inputValues.get(1), orientation);
     }
 
@@ -117,12 +118,15 @@ public class InputHandler {
      * @param instructionInput Given user input
      * @return List of {@link Instruction}s
      */
-    private List<Instruction> extractInstructions(String instructionInput) {
+    @VisibleForTesting
+    List<Instruction> extractInstructions(String instructionInput) {
         String[] splittedInput = instructionInput.toUpperCase().split(""); // splits into single characters as String
         List<Instruction> instructionList = Lists.newArrayList();
         try {
             for (String instruction : splittedInput) {
-                instructionList.add(Instruction.valueOf(instruction));
+                if (!instruction.trim().isEmpty()) {
+                    instructionList.add(Instruction.valueOf(instruction));
+                }
             }
         } catch (Exception ex) {
             throw new IllegalArgumentException("Invalid instructions given: " + instructionInput);

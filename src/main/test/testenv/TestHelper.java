@@ -6,6 +6,7 @@ import java.util.Random;
 
 import org.junit.Before;
 
+import constants.Instruction;
 import constants.Orientation;
 import constants.PlateauSize;
 
@@ -31,6 +32,11 @@ public class TestHelper {
     
     protected static Orientation anyOrientation() {
         List<Orientation> enumValuesAsList = Arrays.asList(Orientation.values());
+        return enumValuesAsList.get(new Random().nextInt(enumValuesAsList.size()));
+    }
+    
+    protected static Instruction anyInstruction() {
+        List<Instruction> enumValuesAsList = Arrays.asList(Instruction.values());
         return enumValuesAsList.get(new Random().nextInt(enumValuesAsList.size()));
     }
 
