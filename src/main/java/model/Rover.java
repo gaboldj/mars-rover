@@ -59,6 +59,7 @@ public class Rover {
             } catch (Exception ex) {
                 System.err.println("Error occured while executing instruction " + instruction
                         + "\nCurrent Position: " + getPositionAsOutput() + "\n" + ex);
+                return;
             }
         }
         System.out.println(getPositionAsOutput());
