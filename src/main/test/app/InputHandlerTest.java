@@ -133,7 +133,7 @@ public class InputHandlerTest extends TestHelper {
         assertThat(rover.getyValue()).isEqualTo(yValue);
         // INFO: More tests for deploying the rover can be found in {@link RoverTest}
     }
-    
+
     @Test
     public void test_checkInputValuesAndDeployRover_with_lower_case_orientation() {
         // Given:
@@ -229,7 +229,7 @@ public class InputHandlerTest extends TestHelper {
 
         fail("Exception expected!");
     }
-    
+
     //
     // EXTRACT INSTRUCTIONS
     //
@@ -246,14 +246,14 @@ public class InputHandlerTest extends TestHelper {
         assertThat(resultList).hasSize(1);
         assertThat(resultList.get(0)).isEqualTo(instruction);
     }
-    
+
     @Test
     public void test_extractInstructions_with_multiple_instructions() {
         // Given:
         Instruction instruction1 = anyInstruction();
         Instruction instruction2 = anyInstruction();
         Instruction instruction3 = anyInstruction();
-        String userInput = instruction1.toString()+instruction2.toString()+instruction3.toString();
+        String userInput = instruction1.toString() + instruction2.toString() + instruction3.toString();
 
         // When:
         List<Instruction> resultList = underTest.extractInstructions(userInput);
@@ -264,7 +264,7 @@ public class InputHandlerTest extends TestHelper {
         assertThat(resultList.get(1)).isEqualTo(instruction2);
         assertThat(resultList.get(2)).isEqualTo(instruction3);
     }
-    
+
     @Test
     public void test_extractInstructions_with_lower_case_letters() {
         // Given:
@@ -279,14 +279,15 @@ public class InputHandlerTest extends TestHelper {
         assertThat(resultList.get(1)).isEqualTo(Instruction.R);
         assertThat(resultList.get(2)).isEqualTo(Instruction.M);
     }
-    
+
     @Test
     public void test_extractInstructions_with_blanks() {
         // Given:
         Instruction instruction1 = anyInstruction();
         Instruction instruction2 = anyInstruction();
         Instruction instruction3 = anyInstruction();
-        String userInput = instruction1.toString()+" "+instruction2.toString()+instruction3.toString()+" ";
+        String userInput = instruction1.toString() + " " + instruction2.toString() + instruction3.toString()
+                + " ";
 
         // When:
         List<Instruction> resultList = underTest.extractInstructions(userInput);
@@ -297,7 +298,7 @@ public class InputHandlerTest extends TestHelper {
         assertThat(resultList.get(1)).isEqualTo(instruction2);
         assertThat(resultList.get(2)).isEqualTo(instruction3);
     }
-    
+
     @Test
     public void test_extractInstructions_without_input() {
         // Given:

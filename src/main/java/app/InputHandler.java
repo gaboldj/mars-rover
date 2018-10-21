@@ -16,7 +16,7 @@ import model.Rover;
 
 public class InputHandler {
     Scanner scanner;
-    
+
     public InputHandler() {
     }
 
@@ -42,9 +42,11 @@ public class InputHandler {
         System.out.println("Enter the instructions (M, L, R) for the second rover - without seperation");
         List<Instruction> instructionsRover2 = extractInstructions(readUserInput());
 
-        // Execute commands
+        // Execute commands and register finished rovers
         rover1.executeInstructions(instructionsRover1);
+        RoverRegistry.registerRover(1L, rover1);
         rover2.executeInstructions(instructionsRover2);
+        RoverRegistry.registerRover(2L, rover2);
     }
 
     /**
@@ -58,8 +60,8 @@ public class InputHandler {
     }
 
     /**
-     * Constitutes the plateau where the rover(s) will operate. An exception will be
-     * thrown if the given plateau size is invalid.
+     * Constitutes the plateau where the rover(s) will operate. An exception
+     * will be thrown if the given plateau size is invalid.
      * 
      * @param userInput
      */

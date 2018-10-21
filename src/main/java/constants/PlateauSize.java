@@ -11,10 +11,10 @@ public class PlateauSize {
     }
 
     public static void setMaxXValue(int input) {
-       maxXValue = input;
+        maxXValue = input;
     }
-    
+
     public static void setMaxYValue(int input) {
         maxYValue = input;
-     }
+    }
 }
