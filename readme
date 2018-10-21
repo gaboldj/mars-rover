@@ -1,0 +1,3 @@
+# Coding Challenge: Mars Rover
+./gradlew test : Runs the unit tests
+./gradlew build : Assembles and tests this project.
