@@ -2,7 +2,6 @@
 build/
 .gradle
 
-*.jar
 *.aar
 *.war
 /bin/
@@ -10,3 +9,4 @@ build/
 
 .classpath
 .project
+.settings
