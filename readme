@@ -1,3 +1,8 @@
 # Coding Challenge: Mars Rover
+
+# Gradle Tasks
 ./gradlew test : Runs the unit tests
 ./gradlew build : Assembles and tests this project.
+
+# To get compiled in Eclipse
+- right click on project --> Configure --> Add Gradle Nature
